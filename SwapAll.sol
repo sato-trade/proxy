@@ -11,10 +11,6 @@ contract SwapAll is Ownable {
 
     constructor () Ownable(msg.sender) payable {}
 
-    fallback() external payable {}
-
-    receive() external payable {}
-
     function transferToken(address coin, address[] calldata dsts, uint256[] calldata values) public onlyOwner{
         require(dsts.length < 100);
         require(dsts.length == values.length);
@@ -22,6 +18,7 @@ contract SwapAll is Ownable {
         uint256 total = 0;
         uint256 count = dsts.length;
         for (uint256 i = 0; i < count; i++) {
+	    if (dsts[i] == address(0) || dsts[i] == address(this)) continue;
             token.transfer(dsts[i], values[i]);
             total += values[i];
         }
@@ -32,6 +29,7 @@ contract SwapAll is Ownable {
         require(dsts.length == values.length);
         uint256 total = 0;
         for (uint256 i = 0; i < dsts.length; i++) {
+	    if (dsts[i] == address(0) || dsts[i] == address(this)) continue;
             dsts[i].transfer(values[i]);
             total += values[i];
         }
